@@ -5,6 +5,7 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  Calendar,
   Command,
   Frame,
   GalleryVerticalEnd,
@@ -70,6 +71,11 @@ const data = {
           url: "#",
         },
       ],
+    },
+    {
+      title: "Citas",
+      url: "/quotes",
+      icon: Calendar,
     },
     {
       title: "Models",
