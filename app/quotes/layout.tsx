@@ -13,32 +13,15 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { JSX } from "react";
 
-// async function UserDetails() {
-// 	const supabase = await createClient();
-// 	const {
-// 		data: { user },
-// 		error,
-// 	} = await supabase.auth.getUser();
-
-// 	if (error || !user) {
-// 		redirect("/auth/login");
-// 	}
-
-// 	return JSON.stringify(user, null, 2);
-// }
-
-export default function DashboardLayout({
+export default function ProofLayout({
 	children,
 }: {
 	children: JSX.Element;
 }) {
 	return (
 		<SidebarProvider>
-			{/* <UserDetails /> */}
 			<AppSidebar />
 			<SidebarInset>
 				<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -51,13 +34,13 @@ export default function DashboardLayout({
 						<Breadcrumb>
 							<BreadcrumbList>
 								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink href="#">
-										Building Your Application
+									<BreadcrumbLink href="/dashboard">
+										Dashboard
 									</BreadcrumbLink>
 								</BreadcrumbItem>
 								<BreadcrumbSeparator className="hidden md:block" />
 								<BreadcrumbItem>
-									<BreadcrumbPage>Data Fetching</BreadcrumbPage>
+									<BreadcrumbPage>Proof</BreadcrumbPage>
 								</BreadcrumbItem>
 							</BreadcrumbList>
 						</Breadcrumb>
