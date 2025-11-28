@@ -14,8 +14,6 @@ import {
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { JSX } from "react";
 
 // async function UserDetails() {
