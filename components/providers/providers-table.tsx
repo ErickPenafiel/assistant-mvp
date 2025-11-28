@@ -21,6 +21,7 @@ type ProvidersTableProps = {
 	onPageChange: (page: number) => void;
 	onEdit: (provider: Provider) => void;
 	onDelete: (provider: Provider) => void;
+	onManageSchedule: (provider: Provider) => void;
 };
 
 export const ProvidersTable: React.FC<ProvidersTableProps> = ({
@@ -31,6 +32,7 @@ export const ProvidersTable: React.FC<ProvidersTableProps> = ({
 	onPageChange,
 	onEdit,
 	onDelete,
+	onManageSchedule,
 }) => {
 	const canPrev = page > 1;
 	const canNext = page < totalPages;
@@ -110,6 +112,13 @@ export const ProvidersTable: React.FC<ProvidersTableProps> = ({
 									</td>
 									<td className="px-4 py-3">
 										<div className="flex justify-end gap-2">
+											<Button
+												variant="outline"
+												size="sm"
+												onClick={() => onManageSchedule(p)}
+											>
+												Horarios
+											</Button>
 											<Button
 												variant="outline"
 												size="sm"

@@ -10,6 +10,7 @@ import { ProvidersTable } from "@/components/providers/providers-table";
 import { useProviders } from "@/hooks/use-providers";
 import { useProviderTypes } from "@/hooks/use-provider-types";
 import { Provider } from "@/types/provider";
+import { ProviderSchedulesDialog } from "@/components/schedules/provider-schedules-dialog";
 
 export default function ProvidersClientPage() {
 	const {
@@ -29,6 +30,11 @@ export default function ProvidersClientPage() {
 	const [editingProvider, setEditingProvider] = useState<Provider | undefined>(
 		undefined
 	);
+
+	const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+	const [scheduleProvider, setScheduleProvider] = useState<
+		Provider | undefined
+	>(undefined);
 
 	const handleNew = () => {
 		setEditingProvider(undefined);
@@ -54,6 +60,11 @@ export default function ProvidersClientPage() {
 			cancel: "Cancelar",
 			duration: 8000,
 		});
+	};
+
+	const handleManageSchedule = (provider: Provider) => {
+		setScheduleProvider(provider);
+		setScheduleDialogOpen(true);
 	};
 
 	const handleSubmitProvider = async (
@@ -101,6 +112,7 @@ export default function ProvidersClientPage() {
 				onPageChange={setPage}
 				onEdit={handleEdit}
 				onDelete={handleDelete}
+				onManageSchedule={handleManageSchedule}
 			/>
 
 			<ProviderFormDialog
@@ -109,6 +121,12 @@ export default function ProvidersClientPage() {
 				initialData={editingProvider}
 				availableTypes={providerTypes}
 				onSubmitProvider={handleSubmitProvider}
+			/>
+
+			<ProviderSchedulesDialog
+				open={scheduleDialogOpen}
+				onOpenChange={setScheduleDialogOpen}
+				provider={scheduleProvider}
 			/>
 		</main>
 	);
