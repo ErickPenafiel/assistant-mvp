@@ -39,7 +39,8 @@ export function QuotesTable() {
   }, [citas, searchTerm, dateFilter]);
 
   const loadCitas = async () => {
-    await getCitas();
+    const result = await getCitas();
+    console.log("Citas cargadas:", result);
   };
 
   const filterCitas = () => {
@@ -51,7 +52,7 @@ export function QuotesTable() {
         (cita) =>
           cita.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
           cita.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          cita.ci.toString().includes(searchTerm) ||
+          cita.ci.includes(searchTerm) ||
           cita.motivo?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }

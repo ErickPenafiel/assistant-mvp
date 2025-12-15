@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { JSX } from "react";
 
-export default function ProofLayout({
+export default function QuotesLayout({
 	children,
 }: {
 	children: JSX.Element;
@@ -40,7 +40,7 @@ export default function ProofLayout({
 								</BreadcrumbItem>
 								<BreadcrumbSeparator className="hidden md:block" />
 								<BreadcrumbItem>
-									<BreadcrumbPage>Proof</BreadcrumbPage>
+									<BreadcrumbPage>Citas</BreadcrumbPage>
 								</BreadcrumbItem>
 							</BreadcrumbList>
 						</Breadcrumb>
