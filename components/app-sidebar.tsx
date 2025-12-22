@@ -77,7 +77,7 @@ const data = {
 		},
 		{
 			title: "Citas",
-			url: `${URL_BASE}/quotes`,
+			url: "/quotes",
 			icon: Calendar,
 			isActive: true,
 		},

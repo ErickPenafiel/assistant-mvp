@@ -1,5 +1,9 @@
-import { createClient } from "@/lib/supabase/client";
+"use client";
+
 import { useState } from "react";
+import { toast } from "sonner";
+import { addDoc, collection, getDocs, query, orderBy, Timestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from "@/config/firebase";
 
 export type CitaData = {
   ci: string;
@@ -11,8 +15,9 @@ export type CitaData = {
 };
 
 export type Cita = CitaData & {
-  id: number;
-  created_at?: string;
+  id: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export function useCitas() {
@@ -23,23 +28,34 @@ export function useCitas() {
   const createCita = async (cita: CitaData) => {
     setIsLoading(true);
     setError(null);
-    const supabase = createClient();
 
     try {
-      const { error: supabaseError } = await supabase.from("cita").insert({
-        ci: (cita.ci),
-        nombre: cita.nombre,
-        apellido: cita.apellido,
-        fecha_cita: cita.fecha_cita,
-        hora_cita: cita.hora_cita,
-        motivo: cita.motivo,
-      });
+      const ref = collection(db, "cita");
+      const payloadRaw = {
+        ...cita,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      };
 
-      if (supabaseError) throw supabaseError;
+      const snapshot = await addDoc(ref, payloadRaw);
+      
+      const created: Cita = {
+        id: snapshot.id,
+        ...cita,
+        createdAt: payloadRaw.createdAt.toDate().toISOString(),
+        updatedAt: payloadRaw.updatedAt.toDate().toISOString(),
+      };
 
+      setCitas((prev) => [created, ...prev]);
+      toast.success("Cita creada correctamente.");
       return true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.error(err);
       setError(err.message);
+      toast.error("Ocurrió un error al crear la cita.", {
+        description: err.message,
+      });
       return false;
     } finally {
       setIsLoading(false);
@@ -49,71 +65,85 @@ export function useCitas() {
   const getCitas = async () => {
     setIsLoading(true);
     setError(null);
-    const supabase = createClient();
 
     try {
-      const { data, error: supabaseError } = await supabase
-        .from("cita")
-        .select("*")
-        .order("fecha_cita", { ascending: false });
+      const ref = collection(db, "cita");
+      const q = query(ref, orderBy("fecha_cita", "desc"));
+      const snapshot = await getDocs(q);
+      
+      const citasData: Cita[] = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      } as Cita));
 
-      if (supabaseError) throw supabaseError;
-
-      setCitas(data || []);
-      return data || [];
+      setCitas(citasData);
+      return citasData;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.error(err);
       setError(err.message);
+      toast.error("No se pudo cargar la lista de citas.", {
+        description: err.message,
+      });
       return [];
     } finally {
       setIsLoading(false);
     }
   };
 
-  const deleteCita = async (id: number) => {
+  const deleteCita = async (id: string) => {
     setIsLoading(true);
     setError(null);
-    const supabase = createClient();
 
     try {
-      const { error: supabaseError } = await supabase
-        .from("cita")
-        .delete()
-        .eq("id", id);
+      const docRef = doc(db, "cita", id);
+      await deleteDoc(docRef);
 
-      if (supabaseError) throw supabaseError;
-
+      setCitas((prev) => prev.filter((c) => c.id !== id));
+      toast.success("Cita eliminada correctamente.");
       return true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.error(err);
       setError(err.message);
+      toast.error("No se pudo eliminar la cita.", {
+        description: err.message,
+      });
       return false;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateCita = async (id: number, cita: CitaData) => {
+  const updateCita = async (id: string, cita: CitaData) => {
     setIsLoading(true);
     setError(null);
-    const supabase = createClient();
 
     try {
-      const { error: supabaseError } = await supabase
-        .from("cita")
-        .update({
-          ci: (cita.ci),
-          nombre: cita.nombre,
-          apellido: cita.apellido,
-          fecha_cita: cita.fecha_cita,
-          hora_cita: cita.hora_cita,
-          motivo: cita.motivo,
-        })
-        .eq("id", id);
+      const docRef = doc(db, "cita", id);
+      const updatePayload = {
+        ...cita,
+        updatedAt: Timestamp.now(),
+      };
 
-      if (supabaseError) throw supabaseError;
+      await updateDoc(docRef, updatePayload);
 
+      const updated: Cita = {
+        id,
+        ...cita,
+        updatedAt: updatePayload.updatedAt.toDate().toISOString(),
+      };
+
+      setCitas((prev) => prev.map((c) => (c.id === id ? updated : c)));
+      toast.success("Cita actualizada correctamente.");
       return true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.error(err);
       setError(err.message);
+      toast.error("Ocurrió un error al actualizar la cita.", {
+        description: err.message,
+      });
       return false;
     } finally {
       setIsLoading(false);
